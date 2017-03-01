@@ -6,7 +6,7 @@ library(RRegArch)
 # Créer le modèle
 m1 <- meanSet(Const=1)
 v1 <- varSet(ConstVar=2)
-r1 <- residualsSet("Normal")
+r1 <- residualsSet('Normal')
 
 mod1 <- modelSet(condMean = m1, condVar = v1, condRes = r1)
 
