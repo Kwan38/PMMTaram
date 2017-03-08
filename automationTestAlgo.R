@@ -83,7 +83,7 @@ for(i in 1:length(ListAlgosGSL)){
   computingTime[i] = computingTime[i]/nbSimu
   ratioConv[i] = ratioConv[i] / nbSimu
 }
-print("Matrice d'erreur quadratiques des modèles")
+print("Matrice d'erreur quadratiques moyenne des modèles")
 print(M)
 print("Vecteur de temps d'execution moyen des modèles")
 print(computingTime)
