@@ -15,11 +15,11 @@ ListAlgosGSL = c('gsl_ConjugateFR',"gsl_ConjugatePR", "gsl_BFGS","gsl_BFGS2","gs
 
 #Stockage Results
 
-M <- matrix(nrow = length(ListModelsGSL),ncol = N,0)
+M <- matrix(nrow = length(ListAlgosGSL),ncol = N,0)
 
-computingTime <- vector(length = length(ListModelsGSL))
+computingTime <- vector(length = length(ListAlgosGSL))
 
-
+ratioConv <- vector(length = length(ListAlgosGSL))
 #Les modèles à tester sont : 
 # Arch / Garch / Tarch / Egarch / Aparch / Figarch / Ugarch / 
 
@@ -48,7 +48,7 @@ for(j in 1:nbSimu){
   ZZ1 <- RegArchSim(nSimul = 1000, model=mod1)
   
   for(i in 1:length(ListAlgosGSL)){
-    print(ListModelsGSL[i])
+    print(ListAlgosGSL[i])
     GSLAlgoParam <- setGSLParam(Algo = ListAlgosGSL[i])
     # Fitter le modèle
     Res1 <- RegArchFit(model=mod1, Yt=ZZ1$Yt,initPoint = mod2, AlgoParam = GSLAlgoParam)
@@ -59,6 +59,11 @@ for(j in 1:nbSimu){
       
     }##On récupère tout ce qu'il y a à récupérer pour chaque modèle et on fait la moyenne
     computingTime[i] = computingTime[i] + Res1$GSLResult$ComputeTime
+    if(Res1$GSLResult$Convergence == TRUE){
+      
+      ratioConv[i] = ratioConv[i] + 1
+      
+    }
   }
   
 }
@@ -69,6 +74,7 @@ for(i in 1:length(ListAlgosGSL)){
     M[i,k] = M[i,k]/nbSimu
   }
   computingTime[i] = computingTime[i]/nbSimu
+  ratioConv[i] = ratioConv[i] / nbSimu
 }
 print("Matrice d'erreur quadratiques des modèles")
 M
@@ -81,3 +87,4 @@ computingTime
 
 # Résumé sur le fit
 #summary(Res1)
+
