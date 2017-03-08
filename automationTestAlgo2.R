@@ -25,7 +25,7 @@ ratioConv <- vector(length = length(ListAlgosGSL))
 
 
 # Créer le modèle
-m1 <- meanSet(Const = 0.1)
+m1 <- NULL
 v1 <- varSet(Arch = list(ConstVar = 0.4, Arch = c(0.5)))
 
 #m2 <- meanSet(Ma = c(0.2,-0.5),Const = 0.3)
