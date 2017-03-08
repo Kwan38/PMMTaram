@@ -12,9 +12,9 @@ ListAlgosGSL = c('gsl_ConjugateFR',"gsl_ConjugatePR", "gsl_BFGS","gsl_BFGS2","gs
 
 #Stockage Results
 
-M <- matrix(nrow = length(ListModelsGSL),ncol = N,0)
+M <- matrix(nrow = length(ListAlgosGSL),ncol = N,0)
 
-computingTime <- vector(length = length(ListModelsGSL))
+computingTime <- vector(length = length(ListAlgosGSL))
 
 
 #Les modèles à tester sont : 
@@ -40,7 +40,7 @@ for(j in 1:nbSimu){
   ZZ1 <- RegArchSim(nSimul = 1000, model=mod1)
 
   for(i in 1:length(ListAlgosGSL)){
-    print(ListModelsGSL[i])
+    print(ListAlgosGSL[i])
     GSLAlgoParam <- setGSLParam(Algo = ListAlgosGSL[i])
     # Fitter le modèle
     Res1 <- RegArchFit(model=mod1, Yt=ZZ1$Yt,initPoint = mod1, AlgoParam = GSLAlgoParam)
