@@ -5,18 +5,16 @@ library(RRegArch)
 
 r <- residualsSet("Normal")
 
-v <- varSet(Tarch=list(ConstVar = 0.8, ArchPlus=c(0.4), ArchMinus=c(0.3)))
+# !!!! ERROR : could not find "egarchSet" !!!! 
+v <- varSet(Egarch=list(ConstVar=0, Arch=c(0.1), Garch=c(0.6), Teta=0.2, Gamma=0.1))
 mod <- modelSet(condMean = NULL,condVar = v, condRes = r)
 
-vInitPoint<- varSet(Tarch=list(ConstVar = 0.5, ArchPlus=c(0.3), ArchMinus=c(0.1)))
+vInitPoint<- varSet(Egarch=list(ConstVar=0, Arch=c(0.2), Garch=c(0.5), Teta=0.2, Gamma=0.2))
 modInitPoint <- modelSet(condMean = NULL,condVar = vInitPoint, condRes = r)
 
 
 ZZ1 <- RegArchSim(nSimul = 1000, model=mod)
 
-# !!!! ERROR : CreateOneRealCondVar: unknown conditional var type !!!!
 Res1 <- RegArchFit(model=mod, Yt=ZZ1$Yt,initPoint = modInitPoint)
-
-
 summary(Res1)
 
