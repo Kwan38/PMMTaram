@@ -1,5 +1,5 @@
 ## Test the convergence, computionnal time and cumulative RSS 
-## In Arch model depending on the number of parameters
+## In Arch model depending on the init point
 
 .libPaths("/user/1/taram/Public/RLib/")
 library(RRegArch)
@@ -12,23 +12,26 @@ simuNb <- 10
 # Residual set
 r <- residualsSet('Normal')
 # Vector of parameters and initPoints
-paramVect <- c(0.2,0.5,0.7,0.35,0.111,0.78,0.84)
-paramVectInit <- c(0.1,0.6,0.55,0.25,0.28,0.6,0.54)
+paramArch <- c(0.5)
+paramVectInit <- c(0.05,0.1,0.25,0.45,0.5,0.55,0.7,0.9)
 # Mid result
 res.errCumTmp <- 0
 # Results
-resListByMod <- list(size = 1:length(paramVect), ErrSqCum = c(), compTime = c())
+resListByMod <- list(distInitPoint = paramVectInit - paramArch, ErrSqCum = c(), compTime = c())
 res <- list(ConjugateFR = resListByMod, ConjugatePR = resListByMod, BFGS = resListByMod,
             BFGS2 = resListByMod, Steepest = resListByMod, SimplexNM = resListByMod,
             SimplexNM2 = resListByMod, SimplexNM2Rand = resListByMod)
 
 #Begin
-for (n in 1:length(paramVect)){
-  print(paste("Test of model Arch with ", n, " lags"))
-  # Creation of model Arch with n lags
-  var <- varSet(Arch = list(ConstVar = 0.1, Arch = paramVect[1:n]))
-  mod <- modelSet(condMean = NULL, condVar = var, condRes = r)
-  varInit <- varSet(Arch = list(ConstVar = 0.1, Arch = paramVectInit[1:n])) 
+
+print(paste("Test of model Arch with ", 1, " lags"))
+# Creation of model Arch with 1 lags
+var <- varSet(Arch = list(ConstVar = 0.1, Arch = paramArch))
+mod <- modelSet(condMean = NULL, condVar = var, condRes = r)
+for (n in 1:length(paramVectInit)) {
+  print(paste("With init point ", paramVectInit[n], " against the true : ", paramArch))
+  #Set the init point
+  varInit <- varSet(Arch = list(ConstVar = 0.1, Arch = paramVectInit[n])) 
   modInit <- modelSet(condMean = NULL, condVar = varInit, condRes = r)
   # Initialize
   for (a in 1:length(algoGSL.list)) {
@@ -48,8 +51,8 @@ for (n in 1:length(paramVect)){
       res.fit <- RegArchFit(model = mod, Yt = arch.sim$Yt, 
                             initPoint = modInit, AlgoParam = GSLAlgoParam)
       res.errCumTmp <- 0
-      for (k in 2:(n+1)) {
-        res.errCumTmp = res.errCumTmp + ((summary(res.fit))$coef[k] - paramVect[k-1])^2
+      for (k in 2:2) {
+        res.errCumTmp = res.errCumTmp + ((summary(res.fit))$coef[k] - paramArch[k-1])^2
       }
       res[[a]]$ErrSqCum[n] <- res[[a]]$ErrSqCum[n] + res.errCumTmp 
       res[[a]]$compTime[n] <- res[[a]]$compTime[n] + res.fit$GSLResult$ComputeTime
@@ -65,21 +68,23 @@ for (n in 1:length(paramVect)){
 #Display graph
 colors <- c("black","lightblue", "darkblue", "lightgreen", "darkgreen", "red", "pink", "cyan")
 # For computational time
-plot(res$ConjugateFR$size, res$ConjugateFR$compTime,
-     main = "Time in function of variable size by algo",
-     xlab = "Variable size", ylab = "Time (s)",
-     type = 'l', lwd = 2, ylim = c(0,5), col = colors[1])
+plot(res$ConjugateFR$distInitPoint, res$ConjugateFR$compTime,
+     main = "Time in function of init point distance by algo",
+     xlab = paste("Init point distance to ", paramArch), ylab = "Time (s)",
+     type = 'l', lwd = 2, ylim = c(0,0.15), col = colors[1])
 for (i in 2:length(algoGSL.list)) {
-  lines(res[[i]]$size, res[[i]]$compTime, type = 'l', lwd = 2, col = colors[i])
+  lines(res[[i]]$distInitPoint, res[[i]]$compTime, type = 'l', lwd = 2, col = colors[i])
 }
 legend("topleft", legend = names(res), col = colors, pch = 8)
 
-# For error squared
-plot(res$ConjugateFR$size, res$ConjugateFR$ErrSqCum,
-     main = "Mea of cumulative error squared in function of variable size by algo",
-     xlab = "Variable size", ylab = "Mean of Cum. Error Squared",
-     type = 'l', lwd = 2, ylim = c(0,0.15), col = colors[1])
+# For error squared #Steepest has NaN
+plot(res$ConjugateFR$distInitPoint, res$ConjugateFR$ErrSqCum,
+     main = "Mean of cumulative error squared \nin function of init point by algo",
+     xlab = paste("Init point distance to ", paramArch), ylab = "Mean of Cum. Error Squared",
+     type = 'l', lwd = 2, ylim = c(0.002,0.005), col = colors[1])
 for (i in 2:length(algoGSL.list)) {
-  lines(res[[i]]$size, res[[i]]$ErrSqCum, type = 'l', lwd = 2, col = colors[i])
+  lines(res[[i]]$distInitPoint, res[[i]]$ErrSqCum, type = 'l', lwd = 2, col = colors[i])
 }
-legend("topleft", legend = names(res), col = colors, pch = 8)
+legend("topright", legend = names(res), col = colors, pch = 8)
+
+
