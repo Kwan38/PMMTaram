@@ -78,7 +78,7 @@ legend("topleft", legend = names(res), col = colors, pch = 8)
 plot(res$ConjugateFR$size, res$ConjugateFR$ErrSqCum,
      main = "Mea of cumulative error squared in function of variable size by algo",
      xlab = "Variable size", ylab = "Mean of Cum. Error Squared",
-     type = 'l', lwd = 2, ylim = c(0,0.01), col = colors[1])
+     type = 'l', lwd = 2, ylim = c(0,0.15), col = colors[1])
 for (i in 2:length(algoGSL.list)) {
   lines(res[[i]]$size, res[[i]]$ErrSqCum, type = 'l', lwd = 2, col = colors[i])
 }
