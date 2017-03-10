@@ -1,5 +1,5 @@
 ## Test the convergence, cmputionnal time and cumulative RSS 
-## In Arch model depending on the number of parameters
+## In Garch model depending on the number of parameters
 
 .libPaths("/user/1/taram/Public/RLib/")
 library(RRegArch)
