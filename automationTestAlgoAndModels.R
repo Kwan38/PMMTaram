@@ -2,7 +2,7 @@
 library(RRegArch)
 
 #Nombre de Simu 
-nbSimu = 55
+nbSimu = 20
 NbModels = 3
 
 ListAlgosGSL = c('gsl_ConjugateFR',"gsl_ConjugatePR", "gsl_BFGS","gsl_BFGS2","gsl_Steepest","gsl_SimplexNM","gsl_SimplexNM2",
@@ -24,7 +24,6 @@ mod1InitPoint <- modelSet(condMean = NULL,condVar = v1InitPoint, condRes = r1)
 
 NArch = 2
 
-
 #GARCH
 v2 <- varSet(Garch = list(ConstVar = 0.6, Garch = c(0.5), Arch = c(0.4)))
 mod2 <- modelSet(condMean = NULL,condVar = v2, condRes = r1)
@@ -33,15 +32,6 @@ v2InitPoint<- varSet(Garch = list(ConstVar = 0.2, Garch = c(0.3), Arch = c(0.6))
 mod2InitPoint <- modelSet(condMean = NULL,condVar = v2InitPoint, condRes = r1)
 
 NGarch = 3
-
-#TARCH : erreur dans l'aide on ne met que deux arg dans le varSet alors qu'on en attend 3
-v3 <- varSet(Tarch=list(ConstVar = 0.8, ArchPlus=c(0.4), ArchMinus=c(0.3)))
-mod3 <- modelSet(condMean = NULL,condVar = v3, condRes = r1)
-
-v3InitPoint<- varSet(Tarch=list(ConstVar = 0.5, ArchPlus=c(0.3), ArchMinus=c(0.1)))
-mod3InitPoint <- modelSet(condMean = NULL,condVar = v3InitPoint, condRes = r1)
-
-NTarch = 3
 
 #EGARCH : error on egarchset function [RESOLVED]
 v3 <- varSet(Egarch=list(ConstVar=0.2, Arch=c(0.4), Garch=c(0.6), Teta=0.2, Gamma=0.1))
@@ -97,7 +87,7 @@ ratioConv <- matrix(nrow = NbModels, ncol = length(ListAlgosGSL), 0)
 
 modelNames = c("ARCH", "GARCH", "EGARCH")
 #Pour chacun des modèles (3)
-for (m in 1:NbModels) {
+for (m in 1:2) {
     
   print("BOUCLE SUR LE MODELE : " )
   print(modelNames[m])
